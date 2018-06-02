@@ -8,6 +8,8 @@
         @include('user.layouts.nav')
 
         <div class="container">
+            @include('user.layouts.messages')
+
             @yield('content')
         </div>
         
