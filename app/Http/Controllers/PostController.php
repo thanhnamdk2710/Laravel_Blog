@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -44,6 +49,7 @@ class PostController extends Controller
 
         $post = new Post;
         $post->title = $request->title;
+        $post->slug = str_slug($request->title);
         $post->body = $request->body;
         $post->save();
 
@@ -93,6 +99,7 @@ class PostController extends Controller
 
         $post = Post::find($id);
         $post->title = $request->title;
+        $post->slug = str_slug($request->title);
         $post->body = $request->body;
         $post->save();
 
