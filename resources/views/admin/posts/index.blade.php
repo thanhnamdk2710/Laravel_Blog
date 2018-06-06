@@ -20,6 +20,7 @@
                     <th>#</th>
                     <th>Title</th>
                     <th>Body</th>
+                    <th>Category</th>
                     <th>Created At</th>
                     <th>Action</th>
                 </tr>
@@ -29,7 +30,8 @@
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $post->title }}</td>
-                        <td>{{ substr($post->body, 0, 50) }}{{ strlen($post->body) > 50 ? '...' : '' }}</td>
+                        <td>{{ substr(strip_tags($post->body), 0, 50) }}{{ strlen(strip_tags($post->body)) > 50 ? '...' : '' }}</td>
+                        <td>{{ $post->category->name }}</td>
                         <td>{{ date('M j, Y', strtotime($post->created_at)) }}</td>
                         <td>
                             {{ Html::linkRoute('posts.edit', 'Edit', [$post->id], ['class' => 'btn btn-warning']) }}

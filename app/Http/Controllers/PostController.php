@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Post;
+use App\Tag;
 use Illuminate\Http\Request;
+use Purifier;
 
 class PostController extends Controller
 {
@@ -31,7 +34,18 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+        $selectCategory = [];
+        foreach ($categories as $category) {
+            $selectCategory[$category->id] = $category->name;
+        }
+        $tags = Tag::all();
+        $selectTag = [];
+        foreach ($tags as $tag) {
+            $selectTag[$tag->id] = $tag->name;
+        }
+
+        return view('admin.posts.create', ['categories' => $selectCategory, 'tags' => $selectTag]);
     }
 
     /**
@@ -44,14 +58,18 @@ class PostController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|max:255',
-            'body' => 'required'
+            'body' => 'required',
+            'category' => 'required|integer',
         ]);
 
         $post = new Post;
         $post->title = $request->title;
         $post->slug = str_slug($request->title);
-        $post->body = $request->body;
+        $post->body = Purifier::clean($request->body);
+        $post->category_id = $request->category;
         $post->save();
+
+        $post->tags()->sync($request->tags, false);
 
         return redirect()->route('posts.index')
             ->with('success', 'The blog post was successfully saved!');
@@ -79,8 +97,19 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
+        $categories = Category::all();
+        $selectCategory = [];
+        foreach ($categories as $category) {
+            $selectCategory[$category->id] = $category->name;
+        }
+        $tags = Tag::all();
+        $selectTag = [];
+        foreach ($tags as $tag) {
+            $selectTag[$tag->id] = $tag->name;
+        }
 
-        return view('admin.posts.edit', ['post' => $post]);
+        return view('admin.posts.edit',
+            ['post' => $post, 'categories' => $selectCategory, 'tags' => $selectTag]);
     }
 
     /**
@@ -94,14 +123,22 @@ class PostController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|max:255',
-            'body' => 'required'
+            'body' => 'required',
+            'category' => 'required|integer',
         ]);
 
         $post = Post::find($id);
         $post->title = $request->title;
         $post->slug = str_slug($request->title);
-        $post->body = $request->body;
+        $post->body = Purifier::clean($request->body);
+        $post->category_id = $request->category;
         $post->save();
+
+        if (isset($request->tags)) {
+            $post->tags()->sync($request->tags);
+        } else {
+            $post->tags()->sync([]);
+        }
 
         return redirect()->route('posts.show', $post->id)
             ->with('success', 'This post was successfully saved!');
@@ -116,6 +153,7 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $post->tags()->detach();
         $post->delete();
 
         return redirect()->route('posts.index')
