@@ -7,21 +7,23 @@
     <div class="col-md-12">
         <h1>About Us</h1>
         <hr>
-        <form action="">
+        {!! Form::open(['route' => 'sendContact', 'method' => 'POST']) !!}
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="text" class="form-control" name="email" id="email">
+                {{ Form::label('email', 'Email: ') }}
+                {{ Form::email('email', null, ['class' => 'form-control']) }}
             </div>
             <div class="form-group">
-                <label for="subject">Subject:</label>
-                <input type="text" class="form-control" name="subject" id="subject">
+                {{ Form::label('subject', 'Subject: ') }}
+                {{ Form::text('subject', null, ['class' => 'form-control']) }}
             </div>
             <div class="form-group">
-                <label for="message">Email:</label>
-                <textarea name="message" id="message" class="form-control" placeholder="Type your message here..."></textarea>
+                {{ Form::label('message', 'Message: ') }}
+                {{ Form::textarea('message', null,
+                    ['class' => 'form-control', 'placeholder' => 'Type your message here...', 'rows' => '5']
+                ) }}
             </div>
-            <input type="submit" class="btn btn-primary" value="Send Message">
-        </form>
+            {{ Form::submit('Send Message', ['class' => 'btn btn-primary']) }}
+        {!! Form::close() !!}
     </div>
 </div>
 @endsection

@@ -4,7 +4,6 @@
 
 @section('styles')
     {!! Html::style('css/parsley.css') !!}
-    {!! Html::style('css/select2.min.css') !!}
 @endsection
 
 @section('content')
@@ -14,14 +13,6 @@
             {{ Form::label('title', 'Title:') }}
             {{ Form::text('title', null, ['class' => 'form-control input-lg']) }}
 
-            {{ Form::label('category', 'Category:', ['class' => 'mt-10']) }}
-            {{ Form::select('category', $categories, $post->category_id, ['class' => 'form-control']) }}
-
-            {{ Form::label('tags', 'Tags:', ['class' => 'mt-10']) }}
-            {{ Form::select('tags[]', $tags, $post->tags,
-                ['class' => 'form-control select2-multi', 'multiple' => 'multiple']
-            ) }}
-
             {{ Form::label('body', 'Body:', ['class' => 'form-spacing-top']) }}
             {{ Form::textarea('body', null, ['class' => 'form-control']) }}
         </div>
@@ -30,10 +21,6 @@
                 <dl class="dl-horizontal">
                     <label>URL:</label>
                     <p><a href="{{ url($post->slug) }}">{{ url($post->slug) }}</a></p>
-                </dl>
-                <dl class="dl-horizontal">
-                    <label>Category:</label>
-                    <p>{{ $post->category->name }}</p>
                 </dl>
                 <dl class="dl-horizontal">
                     <label>Create At:</label>
@@ -60,8 +47,4 @@
 
 @section('scripts')
     {!! Html::script('js/parsley.min.js') !!}
-    {!! Html::script('js/select2.full.min.js') !!}
-    <script type="text/javascript">
-        $('.select2-multi').select2();
-    </script>
 @endsection
